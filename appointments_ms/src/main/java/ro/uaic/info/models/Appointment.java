@@ -9,7 +9,9 @@ import java.util.UUID;
 @Entity
 @Data
 @NamedQueries({
-        @NamedQuery(name = "Appointment.deleteInInterval", query = "DELETE FROM Appointment a WHERE a.dateTime >= :start AND a.dateTime < :end")
+        @NamedQuery(name = "Appointment.deleteInInterval", query = "DELETE FROM Appointment a WHERE a.dateTime >= :start AND a.dateTime < :end"),
+        @NamedQuery(name = "Appointment.findAll", query = "SELECT a FROM Appointment a"),
+        @NamedQuery(name = "Appointment.checkAvailability", query = "SELECT a FROM Appointment a WHERE a.secretaryId = :secretaryId AND a.dateTime = :dateTime"),
 })
 public class Appointment {
     public final static int APPOINTMENT_DURATION = 10;

@@ -15,10 +15,12 @@ import ro.uaic.info.clients.ScheduleClient;
 import ro.uaic.info.clients.UserClient;
 import ro.uaic.info.dtos.AppointmentDto;
 import ro.uaic.info.dtos.TimeEntryDto;
+import ro.uaic.info.dtos.TimeSlotDto;
 import ro.uaic.info.models.Appointment;
 import ro.uaic.info.services.AppointmentService;
 import ro.uaic.info.validators.ValidAppointmentDto;
 
+import java.util.List;
 import java.util.UUID;
 
 @Path("/appointments")
@@ -61,8 +63,7 @@ public class AppointmentResource {
 
     @GET
     @Path("/free-slots")
-    public int getFreeSlots() {
-        List<>
-        return appointmentService.getFreeSlots(secretaryId, dateTime);
+    public List<TimeSlotDto> getFreeSlots() {
+        return appointmentService.getFreeSlots();
     }
 }

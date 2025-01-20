@@ -71,6 +71,6 @@ public class ScheduleService {
             return false;
         }
         int duration = appointmentService.getAppointmentDuration();
-        return timeEntry.getStartTime().isBefore(dateTime.toLocalTime()) && timeEntry.getEndTime().isAfter(dateTime.toLocalTime().plusMinutes(duration));
+        return !timeEntry.getStartTime().isAfter(dateTime.toLocalTime()) && !timeEntry.getEndTime().isBefore(dateTime.toLocalTime().plusMinutes(duration));
     }
 }

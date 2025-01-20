@@ -15,4 +15,8 @@ public interface UserClient {
     @GET
     @Path("/exists/{id}")
     boolean checkIfUserExists(@PathParam("id") UUID id);
+
+    @GET
+    @Path("/name/{id}")
+    String getUserNameById(@PathParam("id") UUID id);
 }

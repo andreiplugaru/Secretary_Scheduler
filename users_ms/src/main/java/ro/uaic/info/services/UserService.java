@@ -24,6 +24,10 @@ public class UserService {
         return userRepository.getUserByName(name);
     }
 
+    public User getUserById(UUID id) {
+        return userRepository.getById(id);
+    }
+
     public boolean checkIfUserExists(UUID id) {
         return userRepository.getById(id) != null;
     }

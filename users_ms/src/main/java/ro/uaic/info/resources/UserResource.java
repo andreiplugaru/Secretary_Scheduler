@@ -68,4 +68,9 @@ public class UserResource {
         Log.info("Checking if user " + id + " exists");
         return userService.checkIfUserExists(id);
     }
+    @GET
+    @Path("/name/{id}")
+    public String getUserNameById(@PathParam("id") UUID id) {
+        return userService.getUserById(id).getName();
+    }
 }
