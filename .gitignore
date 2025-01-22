@@ -1,0 +1,11 @@
+# Ignore the db_persist folder
+db_persist/
+
+# Optionally, if you only want to ignore specific file types in db_persist
+db_persist/*.db
+db_persist/*.log
+db_persist/*.bak
+db_persist/*.tmp
+
+# Ignore hidden files or folders within db_persist
+db_persist/.*

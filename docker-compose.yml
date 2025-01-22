@@ -1,0 +1,89 @@
+services:
+  appointments-service:
+    build:
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+      context: ./appointments_ms
+    # env_file:
+    #   - ./config/user.env
+    ports:
+    - 8081:8081
+    environment:
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - rabbitmq-quickstart-network
+
+  user-service:
+    build:
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+      context: ./users_ms
+    # env_file:
+    #   - ./config/user.env
+    ports:
+    - 8083:8083
+    environment:
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - rabbitmq-quickstart-network
+
+
+  schedule-service:
+    build:
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+      context: ./schedule_ms
+    # env_file:
+    #   - ./config/user.env
+    ports:
+    - 8082:8082
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+    networks:
+      - rabbitmq-quickstart-network
+
+  rabbit:
+    image: rabbitmq:3.12-management
+    ports:
+      - "5672:5672"
+    networks:
+      - rabbitmq-quickstart-network
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5433:5433"
+    volumes:
+      - ./create-databases.sh:/docker-entrypoint-initdb.d/create-databases.sh
+      - ./db_persist:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: md5
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: student
+      POSTGRES_DB: secretary_users_db
+      POSTGRES_DB2: secretary_schedule_db
+      POSTGRES_DB3: secretary_appointments_db
+    command: -p 5433
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -p 5433"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  db:
+
+networks:
+  rabbitmq-quickstart-network:
+    name: rabbitmq-quickstart
