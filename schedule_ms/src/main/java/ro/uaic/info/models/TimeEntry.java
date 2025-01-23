@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import ro.uaic.info.dtos.TimeEntryDto;
+import ro.uaic.info.dtos.TimeIntervalForRemovalDto;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -28,18 +29,20 @@ public class TimeEntry {
         MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY
     }
 
-    public static List<TimeEntryDto> differenceBetween(TimeEntry oldTimeEntry, TimeEntry newTimeEntry) {
-        List<TimeEntryDto> result = new ArrayList<>();
-        TimeEntryDto difference;
+    public static List<TimeIntervalForRemovalDto> differenceBetween(TimeEntry oldTimeEntry, TimeEntry newTimeEntry) {
+        List<TimeIntervalForRemovalDto> result = new ArrayList<>();
+        TimeIntervalForRemovalDto difference;
         if (newTimeEntry.getStartTime().isAfter(oldTimeEntry.getStartTime())) {
-            difference = new TimeEntryDto();
+            difference = new TimeIntervalForRemovalDto();
+            difference.setSecretaryId(oldTimeEntry.getUserSchedule().getUserId().toString());
             difference.setDay(String.valueOf(oldTimeEntry.getDay()));
             difference.setStartTime(oldTimeEntry.getStartTime());
             difference.setEndTime(newTimeEntry.getStartTime());
             result.add(difference);
         }
         if (newTimeEntry.getEndTime().isBefore(oldTimeEntry.getEndTime())) {
-            difference = new TimeEntryDto();
+            difference = new TimeIntervalForRemovalDto();
+            difference.setSecretaryId(oldTimeEntry.getUserSchedule().getUserId().toString());
             difference.setDay(String.valueOf(oldTimeEntry.getDay()));
             difference.setStartTime(newTimeEntry.getEndTime());
             difference.setEndTime(oldTimeEntry.getEndTime());

@@ -32,7 +32,7 @@ public class TokenService {
             jwtClaims.setClaim(Claims.preferred_username.name(), userId); //add more
             jwtClaims.setClaim(Claims.groups.name(), Arrays.asList(roles));
             jwtClaims.setAudience("using-jwt");
-            jwtClaims.setExpirationTimeMinutesInTheFuture(60); // TODO specify how long do you need
+            jwtClaims.setExpirationTimeMinutesInTheFuture(200); // TODO specify how long do you need
 
 
             String token = TokenUtils.generateTokenString(jwtClaims);

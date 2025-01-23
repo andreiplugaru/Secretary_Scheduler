@@ -13,9 +13,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import ro.uaic.info.clients.ScheduleClient;
 import ro.uaic.info.clients.UserClient;
-import ro.uaic.info.dtos.AppointmentDto;
-import ro.uaic.info.dtos.TimeEntryDto;
-import ro.uaic.info.dtos.TimeSlotDto;
+import ro.uaic.info.dtos.*;
 import ro.uaic.info.models.Appointment;
 import ro.uaic.info.services.AppointmentService;
 import ro.uaic.info.validators.ValidAppointmentDto;
@@ -31,8 +29,6 @@ public class AppointmentResource {
     @Inject
     AppointmentService appointmentService;
 
-    @Inject @RestClient
-    ScheduleClient scheduleClient;
 
     @POST
     @RolesAllowed("STUDENT")
@@ -49,14 +45,27 @@ public class AppointmentResource {
     }
 
     @GET
+    @RolesAllowed("STUDENT")
+    public List<AppointmentDto> getAppointmentsByStudentId(@Context JsonWebToken ctx) {
+        String studentId = ctx.getClaim("preferred_username");
+        return appointmentService.getAppointmentsByStudentId(UUID.fromString(studentId)).stream().map((appointment) -> {
+            AppointmentDto returnAppointmentDto = new AppointmentDto();
+            returnAppointmentDto.setDateTime(appointment.getDateTime());
+            returnAppointmentDto.setSecretaryId(appointment.getSecretaryId());
+            return returnAppointmentDto;
+        }).toList();
+    }
+
+    @GET
     @Path("/duration")
     public int getAppointmentDuration() {
         return Appointment.APPOINTMENT_DURATION;
     }
 
     @Incoming("removedIntervals")
-    public void process(io.vertx.core.json.JsonObject timeEntryDtoJson) throws InterruptedException {
-        TimeEntryDto timeEntryDto = timeEntryDtoJson.mapTo(TimeEntryDto.class);
+    @Transactional
+    public void processRemovals(io.vertx.core.json.JsonObject timeEntryDtoJson) {
+        TimeIntervalForRemovalDto timeEntryDto = timeEntryDtoJson.mapTo(TimeIntervalForRemovalDto.class);
         appointmentService.deleteAppointmentsInInterval(timeEntryDto);
         LOG.info("Processing removed interval: " + timeEntryDto);
     }

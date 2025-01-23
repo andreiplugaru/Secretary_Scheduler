@@ -5,11 +5,10 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.logging.Logger;
-import ro.uaic.info.dtos.TimeEntryDto;
+import ro.uaic.info.dtos.TimeIntervalForRemovalDto;
 import ro.uaic.info.models.TimeEntry;
 import ro.uaic.info.models.UserSchedule;
 import ro.uaic.info.repositories.ScheduleRepository;
-import ro.uaic.info.resources.ScheduleResource;
 
 import java.sql.Time;
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ public class ScheduleService {
     @Inject
     AppointmentService appointmentService;
     @Channel("removedIntervals")
-    Emitter<TimeEntryDto> removedIntervalsEmitter;
+    Emitter<TimeIntervalForRemovalDto> removedIntervalsEmitter;
 
     public List<UserSchedule> getAllUserSchedules() {
         return scheduleRepository.findAll();
@@ -46,7 +45,7 @@ public class ScheduleService {
         else {
             TimeEntry existingTimeEntry = userSchedule.getTimeEntryByDay(String.valueOf(timeEntry.getDay()));
             if (existingTimeEntry != null) {
-                List<TimeEntryDto> difference = TimeEntry.differenceBetween(existingTimeEntry, timeEntry);
+                List<TimeIntervalForRemovalDto> difference = TimeEntry.differenceBetween(existingTimeEntry, timeEntry);
                 difference.forEach((timeEntryDto) -> {
                     LOG.info("Sending removed interval: " + timeEntryDto);
                     removedIntervalsEmitter.send(timeEntryDto);

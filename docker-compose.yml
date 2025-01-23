@@ -75,7 +75,7 @@ services:
       POSTGRES_DB3: secretary_appointments_db
     command: -p 5433
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -p 5433"]
+      test: ["CMD-SHELL", "pg_isready -p 5433", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5

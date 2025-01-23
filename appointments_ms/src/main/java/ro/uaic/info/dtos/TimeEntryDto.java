@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @ToString
 @RegisterForReflection
 public class TimeEntryDto {
+    private String secretaryId;
     private String day;
     private LocalTime startTime;
     private LocalTime endTime;
